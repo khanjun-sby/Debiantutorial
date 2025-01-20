@@ -1,0 +1,63 @@
+DNS Server
+https://zonabiner.com/tutorial/debian/konfigurasi-dns
+
+contoh
+jika buat konfigurasi A dan CNAME record sebagai berikut
+lks-jember.id --> ip 10.10.10.2 (Name server)
+www.lks-jember.id --> CNAME ke domain lks-jember.id
+phpinfo.lks-jember.id --> ip 10.10.10.2
+mail.lks-jember.id --> ip mail server 10.10.10.3 
+cacti.lks-jember.id --> ip server monitoring 10.10.10.4 
+db.lks-jember.id --> ip server database 10.10.10.5 
+buat konfigurasi MX record sebagai berikut
+lks-jember.id --> ke ip mail server
+buat konfigurasi PTR record
+ip mail server --> mail.lks-jember.id
+
+maka konfigurasinya sebagai berikut 
+Forward Zone File (A, CNAME, dan MX Record)
+
+---
+$TTL    604800
+@       IN      SOA     lks-jember.id. root.lks-jember.id. (
+                              1         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      ns.lks-jember.id.
+
+; A Records
+@       IN      A       10.10.10.2
+phpinfo IN      A       10.10.10.2
+mail    IN      A       10.10.10.3
+cacti   IN      A       10.10.10.4
+db      IN      A       10.10.10.5
+
+; CNAME Record
+www     IN      CNAME   lks-jember.id.
+
+; MX Record
+@       IN      MX      10 mail.lks-jember.id.
+---
+
+Reverse Zone File (PTR Record)
+---
+$TTL    604800
+@       IN      SOA     lks-jember.id. root.lks-jember.id. (
+                              1         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      ns.lks-jember.id.
+
+; PTR Records
+2       IN      PTR     lks-jember.id.
+3       IN      PTR     mail.lks-jember.id.
+4       IN      PTR     cacti.lks-jember.id.
+5       IN      PTR     db.lks-jember.id.
+---
+
