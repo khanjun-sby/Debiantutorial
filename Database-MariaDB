@@ -1,0 +1,43 @@
+Reference
+https://www.digitalocean.com/community/tutorials/how-to-install-mariadb-on-debian-11#step-3-optional-creating-an-administrative-user-that-employs-password-authentication
+
+contoh 
+lakukan update password untuk user root pada database menggunakan default password
+buat user baru dengan nama userdb-x dan dengan password lks2024-x dengan permission read user
+buat user baru dengan nama userdb2-x dan dengan password lks2024-x dengan permission read write
+buat user baru dengan nama userdb3-x dan dengan password lks2024-x dengan permission allow akses hanya dari blok ip 10.10.2.0
+
+akun read-only
+---
+CREATE USER 'userdb-x'@'%' IDENTIFIED BY 'lks2024-x';
+GRANT SELECT ON *.* TO 'userdb-x'@'%';
+FLUSH PRIVILEGES;
+---
+
+akun READ-WRITE
+---
+CREATE USER 'userdb2-x'@'%' IDENTIFIED BY 'lks2024-x';
+GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO 'userdb2-x'@'%';
+FLUSH PRIVILEGES;
+---
+
+user userdb3-x dengan password lks2024-x dengan izin hanya bisa diakses dari blok IP 10.10.2.0/24
+---
+CREATE USER 'userdb3-x'@'10.10.2.%' IDENTIFIED BY 'lks2024-x';
+GRANT ALL PRIVILEGES ON *.* TO 'userdb3-x'@'10.10.2.%';
+FLUSH PRIVILEGES;
+---
+
+Untuk memeriksa apakah pengguna telah berhasil dibuat, jalankan perintah berikut di MariaDB:
+---
+SELECT user, host FROM mysql.user;
+
+Output :
++------------+------------+
+| user       | host       |
++------------+------------+
+| root       | localhost  |
+| userdb-x   | %          |
+| userdb2-x  | %          |
+| userdb3-x  | 10.10.2.%  |
++------------+------------+
